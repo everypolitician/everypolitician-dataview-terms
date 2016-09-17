@@ -26,10 +26,15 @@ And then execute:
 ## Usage
 
 ```ruby
-require 'everypolitician/dataview-terms'
+require 'everypolitician/dataview/terms'
 view = EveryPolitician::Dataview::Terms.new(
   popolo: EveryPolitician::Popolo.read('popolo.json')
 )
+
+view.terms.each do |term|
+  id   = term.id
+  text = term.as_csv
+end
 ```
 
 ## Contributing
