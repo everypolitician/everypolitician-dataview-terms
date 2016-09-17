@@ -17,6 +17,8 @@ describe 'Pitcairn' do
   end
 
   it 'has CSV view' do
-    assert_equal 'id,name', subject.terms.first.as_csv
+    subject.terms.each do |t|
+      assert_equal File.read("test/fixtures/pitcairn-#{t.id}.csv"), t.as_csv
+    end
   end
 end
