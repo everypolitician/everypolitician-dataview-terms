@@ -37,7 +37,7 @@ module Everypolitician
         terms  = popolo.terms.group_by(&:id)
         areas  = popolo.areas.group_by(&:id)
 
-        data = popolo.memberships.select(&:legislative_period_id).map do |m|
+        data = popolo.memberships.where(legislative_period_id: term.id).map do |m|
           person = people[m.person_id].first
           group  = orgs[m.on_behalf_of_id].first
           house  = orgs[m.organization_id].first
@@ -63,10 +63,8 @@ module Everypolitician
           }
         end
 
-        terms = data.group_by { |r| r[:term] }
-        rs = terms[id]
-        header = rs.first.keys.to_csv
-        rows   = rs.portable_sort_by { |r| [r[:name], r[:id], r[:start_date].to_s, r[:area].to_s] }.map { |r| r.values.to_csv }
+        header = data.first.keys.to_csv
+        rows   = data.portable_sort_by { |r| [r[:name], r[:id], r[:start_date].to_s, r[:area].to_s] }.map { |r| r.values.to_csv }
         [header, rows].compact.join
       end
 
