@@ -48,7 +48,7 @@ module Everypolitician
       attr_reader :term
 
       def data
-        @data ||= popolo.memberships.where(legislative_period_id: term.id).map do |m|
+        @data ||= term_memberships.map do |m|
           person = people[m.person_id].first
           group  = orgs[m.on_behalf_of_id].first
           house  = orgs[m.organization_id].first
@@ -76,6 +76,10 @@ module Everypolitician
 
       def popolo
         term.popolo
+      end
+
+      def term_memberships
+        @tmems ||= popolo.memberships.where(legislative_period_id: term.id)
       end
 
       # For quicker lookup. TODO: use fast EP::Popolo searches
