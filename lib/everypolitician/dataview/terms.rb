@@ -31,17 +31,10 @@ module Everypolitician
       end
 
       def as_csv
-        # For quicker lookup. TODO: use fast EP::Popolo searches
-        people = popolo.persons.group_by(&:id)
-        orgs   = popolo.organizations.group_by(&:id)
-        terms  = popolo.terms.group_by(&:id)
-        areas  = popolo.areas.group_by(&:id)
-
         data = popolo.memberships.where(legislative_period_id: term.id).map do |m|
           person = people[m.person_id].first
           group  = orgs[m.on_behalf_of_id].first
           house  = orgs[m.organization_id].first
-          term   = terms[m.legislative_period_id].first
 
           {
             id:         person.id.split('/').last,
@@ -55,7 +48,7 @@ module Everypolitician
             area_id:    m.area_id,
             area:       m.area_id && areas[m.area_id].first.name,
             chamber:    house.name,
-            term:       term.id.split('/').last,
+            term:       id,
             start_date: m.start_date,
             end_date:   m.end_date,
             image:      person.image,
@@ -78,6 +71,19 @@ module Everypolitician
 
       def popolo
         term.popolo
+      end
+
+      # For quicker lookup. TODO: use fast EP::Popolo searches
+      def people
+        @people ||= popolo.persons.group_by(&:id)
+      end
+
+      def orgs
+        @orgs ||= popolo.organizations.group_by(&:id)
+      end
+
+      def areas
+        @areas ||= popolo.areas.group_by(&:id)
       end
     end
   end
