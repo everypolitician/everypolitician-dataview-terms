@@ -31,7 +31,24 @@ module Everypolitician
       end
 
       def as_csv
-        data = popolo.memberships.where(legislative_period_id: term.id).map do |m|
+        header = data.first.keys.to_csv
+        sorted = data.portable_sort_by do |r|
+          [r[:name], r[:id], r[:start_date].to_s, r[:area].to_s]
+        end
+        rows = sorted.map { |r| r.values.to_csv }
+        [header, rows].compact.join
+      end
+
+      def id
+        term.id.split('/').last
+      end
+
+      private
+
+      attr_reader :term
+
+      def data
+        @data ||= popolo.memberships.where(legislative_period_id: term.id).map do |m|
           person = people[m.person_id].first
           group  = orgs[m.on_behalf_of_id].first
           house  = orgs[m.organization_id].first
@@ -55,19 +72,7 @@ module Everypolitician
             gender:     person.gender,
           }
         end
-
-        header = data.first.keys.to_csv
-        rows   = data.portable_sort_by { |r| [r[:name], r[:id], r[:start_date].to_s, r[:area].to_s] }.map { |r| r.values.to_csv }
-        [header, rows].compact.join
       end
-
-      def id
-        term.id.split('/').last
-      end
-
-      private
-
-      attr_reader :term
 
       def popolo
         term.popolo
