@@ -10,4 +10,8 @@ describe 'Pitcairn' do
   it 'has 3 terms' do
     assert_equal 3, subject.terms.count
   end
+
+  it 'has CSV view' do
+    assert_equal 'id,name', subject.terms.first.as_csv
+  end
 end
