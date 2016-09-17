@@ -31,7 +31,6 @@ module Everypolitician
       end
 
       def as_csv
-        header = data.first.keys.to_csv
         sorted = data.portable_sort_by do |r|
           [r[:name], r[:id], r[:start_date].to_s, r[:area].to_s]
         end
@@ -46,6 +45,10 @@ module Everypolitician
       private
 
       attr_reader :term
+
+      def header
+        data.first.keys.to_csv
+      end
 
       def data
         @data ||= term_memberships.map do |m|
