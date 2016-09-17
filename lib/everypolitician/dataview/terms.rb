@@ -31,7 +31,6 @@ module Everypolitician
       end
 
       def as_csv
-        rows = sorted_data.map { |r| r.values.to_csv }
         [header, rows].compact.join
       end
 
@@ -45,6 +44,10 @@ module Everypolitician
 
       def header
         data.first.keys.to_csv
+      end
+
+      def rows
+        sorted_data.map { |r| r.values.to_csv }
       end
 
       def sorted_data
