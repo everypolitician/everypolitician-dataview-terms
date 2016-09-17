@@ -31,10 +31,7 @@ module Everypolitician
       end
 
       def as_csv
-        sorted = data.portable_sort_by do |r|
-          [r[:name], r[:id], r[:start_date].to_s, r[:area].to_s]
-        end
-        rows = sorted.map { |r| r.values.to_csv }
+        rows = sorted_data.map { |r| r.values.to_csv }
         [header, rows].compact.join
       end
 
@@ -48,6 +45,12 @@ module Everypolitician
 
       def header
         data.first.keys.to_csv
+      end
+
+      def sorted_data
+        data.portable_sort_by do |r|
+          [r[:name], r[:id], r[:start_date].to_s, r[:area].to_s]
+        end
       end
 
       def data
