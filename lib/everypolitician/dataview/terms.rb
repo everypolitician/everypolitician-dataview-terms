@@ -23,6 +23,10 @@ module Everypolitician
         'id,name'
       end
 
+      def id
+        term.id.split('/').last
+      end
+
       private
 
       attr_reader :term
