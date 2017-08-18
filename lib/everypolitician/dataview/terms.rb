@@ -79,6 +79,7 @@ module Everypolitician
             end_date:   m.end_date,
             image:      person.image,
             gender:     person.gender,
+            wikidata:   person.wikidata,
           }
         end
       end
