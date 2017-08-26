@@ -58,9 +58,10 @@ module Everypolitician
 
       def data
         @data ||= term_memberships.map do |m|
-          person = people[m.person_id].first
-          group  = orgs[m.on_behalf_of_id].first
-          house  = orgs[m.organization_id].first
+          person = popolo.persons.find_by(id: m.person_id)
+          house  = popolo.organizations.find_by(id: m.organization_id)
+          group  = popolo.organizations.find_by(id: m.on_behalf_of_id)
+          area   = popolo.areas.find_by(id: m.area_id)
 
           {
             id:         person.id.split('/').last,
@@ -72,7 +73,7 @@ module Everypolitician
             group:      group.name,
             group_id:   group.id.split('/').last,
             area_id:    m.area_id,
-            area:       m.area_id && areas[m.area_id].first.name,
+            area:       area && area.name,
             chamber:    house.name,
             term:       id,
             start_date: m.start_date,
@@ -90,19 +91,6 @@ module Everypolitician
 
       def term_memberships
         @tmems ||= popolo.memberships.where(legislative_period_id: term.id)
-      end
-
-      # For quicker lookup. TODO: use fast EP::Popolo searches
-      def people
-        @people ||= popolo.persons.group_by(&:id)
-      end
-
-      def orgs
-        @orgs ||= popolo.organizations.group_by(&:id)
-      end
-
-      def areas
-        @areas ||= popolo.areas.group_by(&:id)
       end
     end
   end
